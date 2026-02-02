@@ -1,0 +1,28 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: payment-service-kafka-scaler
+  namespace: microservices
+spec:
+  scaleTargetRef:
+    name: payment-service
+  minReplicaCount: 2
+  maxReplicaCount: 20
+  pollingInterval: 30
+  cooldownPeriod: 300
+  triggers:
+  # Kafka Consumer Lag 기반 스케일링
+  - type: kafka
+    metadata:
+      bootstrapServers: kafka.microservices.svc.cluster.local:9092
+      consumerGroup: payment-service-group
+      topic: order-events
+      lagThreshold: "50"
+      offsetResetPolicy: latest
+  # Kafka 파티션 수에 따른 스케일링
+  - type: kafka
+    metadata:
+      bootstrapServers: kafka.microservices.svc.cluster.local:9092
+      consumerGroup: payment-service-group
+      topic: order-events
+      lagThreshold: "100"

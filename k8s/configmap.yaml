@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: microservices
+data:
+  # Kafka Configuration
+  KAFKA_BOOTSTRAP_SERVERS: "kafka-service:9092"
+  
+  # Order Service DB Configuration
+  ORDER_DB_HOST: "postgres-order-service"
+  ORDER_DB_PORT: "5432"
+  ORDER_DB_NAME: "orderdb"
+  ORDER_DB_USER: "postgres"
+  
+  # Payment Service DB Configuration
+  PAYMENT_DB_HOST: "postgres-payment-service"
+  PAYMENT_DB_PORT: "5432"
+  PAYMENT_DB_NAME: "paymentdb"
+  PAYMENT_DB_USER: "postgres"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secrets
+  namespace: microservices
+type: Opaque
+stringData:
+  ORDER_DB_PASSWORD: "postgres"
+  PAYMENT_DB_PASSWORD: "postgres"

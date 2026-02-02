@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-dashboard
+  namespace: microservices
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: admin-dashboard
+  template:
+    metadata:
+      labels:
+        app: admin-dashboard
+    spec:
+      containers:
+      - name: admin-dashboard
+        image: admin-dashboard:1.0.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        env:
+        - name: REACT_APP_ORDER_SERVICE_URL
+          value: "http://order-service:8080"
+        - name: REACT_APP_PAYMENT_SERVICE_URL
+          value: "http://payment-service:8081"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-dashboard-service
+  namespace: microservices
+spec:
+  selector:
+    app: admin-dashboard
+  ports:
+  - port: 80
+    targetPort: 80
+  type: LoadBalancer
