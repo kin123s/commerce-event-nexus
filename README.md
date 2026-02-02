@@ -7,6 +7,26 @@ Spring Boot 3, Java 17, Kafka, Saga Pattern, Transactional Outbox를 활용한 �
 [![CI/CD](https://github.com/username/order-payment-msa/workflows/CI/CD%20Pipeline/badge.svg)](https://github.com/username/order-payment-msa/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+## ⚡ 빠른 시작 (1분)
+
+```bash
+# 1. .env 설정
+cp .env.example .env
+
+# 2. 시스템 시작
+./start.sh
+
+# 3. 상태 확인
+./check-health.sh
+
+# 4. API 테스트
+./test-api.sh
+```
+
+**자세한 가이드**: [QUICKSTART.md](QUICKSTART.md)를 참고하세요.
+
+---
+
 ## 📋 목차
 
 - [프로젝트 소개](#프로젝트-소개)

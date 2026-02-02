@@ -1,5 +1,10 @@
 # .gitignore for Java Spring Boot + React Project
 
+# ============= Environment Variables =============
+.env
+.env.local
+.env.*.local
+
 # ============= Java / Maven =============
 target/
 !.mvn/wrapper/maven-wrapper.jar

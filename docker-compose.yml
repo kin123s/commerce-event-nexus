@@ -83,17 +83,18 @@ services:
     container_name: postgres-order
     command: postgres -c wal_level=logical
     environment:
-      POSTGRES_DB: orderdb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${ORDER_DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "5432:5432"
+      - "${ORDER_DB_PORT}:5432"
     volumes:
       - postgres-order-data:/var/lib/postgresql/data
+      - ./order-service/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     networks:
       - microservices-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -101,19 +102,21 @@ services:
   # PostgreSQL for Payment Service
   postgres-payment:
     image: postgres:16-alpine
+    container_name: postgres-payment
     command: postgres -c wal_level=logical
     environment:
-      POSTGRES_DB: paymentdb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${PAYMENT_DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5433:5432"
     volumes:
       - postgres-payment-data:/var/lib/postgresql/data
+      - ./payment-service/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     networks:
       - microservices-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -142,8 +145,7 @@ services:
     networks:
       - microservices-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8083/
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD", "curl", "-f", "http://localhost:8083/"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -160,14 +162,14 @@ services:
       kafka:
         condition: service_healthy
     ports:
-      - "8080:8080"
+      - "${ORDER_SERVICE_PORT}:8080"
     environment:
-      DB_HOST: postgres-order
+      DB_HOST: ${ORDER_DB_HOST}
       DB_PORT: 5432
-      DB_NAME: orderdb
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      DB_NAME: ${ORDER_DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS}
     networks:
       - microservices-network
     restart: unless-stopped
@@ -184,15 +186,14 @@ services:
       kafka:
         condition: service_healthy
     ports:
-      - "8081:8081"
+      - "${PAYMENT_SERVICE_PORT}:8081"
     environment:
-      DB_HOST: postgres-payment
+      DB_HOST: ${PAYMENT_DB_HOST}
       DB_PORT: 5432
-      DB_NAME: paymentdb
-      DB_USER: postgres
-  redis-data:
-      DB_PASSWORD: postgres
-      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      DB_NAME: ${PAYMENT_DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS}
     networks:
       - microservices-network
     restart: unless-stopped
@@ -222,3 +223,4 @@ networks:
 volumes:
   postgres-order-data:
   postgres-payment-data:
+  redis-data:
