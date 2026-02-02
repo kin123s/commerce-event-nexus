@@ -1,0 +1,90 @@
+# .gitignore for Java Spring Boot + React Project
+
+# ============= Java / Maven =============
+target/
+!.mvn/wrapper/maven-wrapper.jar
+*.class
+*.log
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# ============= Spring Boot =============
+HELP.md
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+# ============= IntelliJ IDEA =============
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# ============= Eclipse =============
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+
+# ============= VS Code =============
+.vscode/
+*.code-workspace
+
+# ============= macOS =============
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ============= React / Node.js =============
+admin-dashboard/node_modules/
+admin-dashboard/build/
+admin-dashboard/.env.local
+admin-dashboard/.env.development.local
+admin-dashboard/.env.test.local
+admin-dashboard/.env.production.local
+admin-dashboard/npm-debug.log*
+admin-dashboard/yarn-debug.log*
+admin-dashboard/yarn-error.log*
+
+# ============= Docker =============
+.dockerignore
+
+# ============= Database =============
+*.db
+*.sqlite
+*.sqlite3
+
+# ============= Logs =============
+logs/
+*.log
+
+# ============= Environment Variables =============
+.env
+.env.local
+.env.*.local
+
+# ============= OS Generated Files =============
+Thumbs.db
+ehthumbs.db
+Desktop.ini
