@@ -1,0 +1,88 @@
+# Default values for order-payment-microservices
+replicaCount:
+  orderService: 2
+  paymentService: 2
+
+image:
+  orderService:
+    repository: order-service
+    tag: "1.0.0"
+    pullPolicy: IfNotPresent
+  paymentService:
+    repository: payment-service
+    tag: "1.0.0"
+    pullPolicy: IfNotPresent
+  adminDashboard:
+    repository: admin-dashboard
+    tag: "1.0.0"
+    pullPolicy: IfNotPresent
+
+service:
+  orderService:
+    type: ClusterIP
+    port: 8080
+  paymentService:
+    type: ClusterIP
+    port: 8081
+  adminDashboard:
+    type: LoadBalancer
+    port: 80
+
+resources:
+  orderService:
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
+  paymentService:
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
+
+autoscaling:
+  enabled: true
+  orderService:
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilization: 70
+    targetMemoryUtilization: 80
+  paymentService:
+    minReplicas: 2
+    maxReplicas: 15
+    targetCPUUtilization: 70
+    targetMemoryUtilization: 80
+
+# KEDA for Kafka-based autoscaling
+keda:
+  enabled: true
+  lagThreshold: 50
+
+postgres:
+  orderDb:
+    host: postgres-order
+    port: 5432
+    database: orderdb
+    username: postgres
+    password: postgres
+  paymentDb:
+    host: postgres-payment
+    port: 5432
+    database: paymentdb
+    username: postgres
+    password: postgres
+
+kafka:
+  bootstrapServers: kafka:29092
+  topics:
+    orderEvents: order-events
+    paymentEvents: payment-events
+
+redis:
+  enabled: true
+  host: redis
+  port: 6379

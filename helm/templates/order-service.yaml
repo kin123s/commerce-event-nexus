@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-order-service
+  namespace: {{ .Values.namespace | default "microservices" }}
+spec:
+  replicas: {{ .Values.replicaCount.orderService }}
+  selector:
+    matchLabels:
+      app: order-service
+  template:
+    metadata:
+      labels:
+        app: order-service
+        version: v1
+    spec:
+      containers:
+      - name: order-service
+        image: "{{ .Values.image.orderService.repository }}:{{ .Values.image.orderService.tag }}"
+        imagePullPolicy: {{ .Values.image.orderService.pullPolicy }}
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DB_HOST
+          value: {{ .Values.postgres.orderDb.host | quote }}
+        - name: DB_PORT
+          value: {{ .Values.postgres.orderDb.port | quote }}
+        - name: DB_NAME
+          value: {{ .Values.postgres.orderDb.database | quote }}
+        - name: DB_USER
+          value: {{ .Values.postgres.orderDb.username | quote }}
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-secrets
+              key: order-db-password
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-config
+              key: KAFKA_BOOTSTRAP_SERVERS
+        resources:
+          {{- toYaml .Values.resources.orderService | nindent 10 }}
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+  namespace: {{ .Values.namespace | default "microservices" }}
+spec:
+  type: {{ .Values.service.orderService.type }}
+  ports:
+  - port: {{ .Values.service.orderService.port }}
+    targetPort: 8080
+  selector:
+    app: order-service
