@@ -41,4 +41,4 @@ management:
 
 kafka:
   topic:
-    order-events: order.created
+    order-events: order-events
