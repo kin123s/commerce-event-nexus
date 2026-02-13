@@ -1,10 +1,10 @@
 # React 빌드 스테이지
-FROM node:18-alpine AS build
+FROM node:18 AS build
 WORKDIR /app
 
 # package.json 복사 및 의존성 설치
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 
 # 소스 코드 복사 및 빌드
 COPY . .
